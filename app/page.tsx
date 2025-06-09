@@ -1,103 +1,370 @@
-import Image from "next/image";
+/* eslint-disable react/no-unescaped-entities */
+/* eslint-disable @next/next/no-img-element */
+'use client';
+
+import {
+  faChevronUp,
+  faHandHoldingUsd,
+  faVolumeLow,
+  faSignOutAlt,
+  faWallet,
+} from '@fortawesome/free-solid-svg-icons';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { Autoplay, EffectFade, Pagination, Navigation } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { useUser } from '@/context/useUserContext';
+
+import { SyncOutlined, CalendarFilled } from '@ant-design/icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import DownloadApp from '@/components/HomePage/DownloadApp';
+import HomePageMobile from '@/components/HomePage/HomePageMobile';
+import LiusSuarez from '@/components/HomePage/LiusSuarez';
+import Marquee from 'react-fast-marquee';
+import JackportComponent from '@/components/HomePage/Jackpot';
+import DiverseProducts from '@/components/HomePage/DiverseProducts';
+import GameHot from '@/components/HomePage/GameHot';
+import MarqueeDesktop from '@/components/MarqueeDesktop';
+import styles from '@/styles/homepage.module.css';
+import Image from 'next/image';
+import { img } from '@/constant/images';
+import { useWindowSize } from 'react-use';
+import { getImageQuality } from '@/utils';
+
+const dataImgSlide = [
+  'https://cdn.jsdelivr.net/gh/snail5555/akv@main/789bet/images/banner/a.jpg',
+  'https://cdn.jsdelivr.net/gh/snail5555/akv@main/789bet/images/banner/b.jpg',
+  'https://cdn.jsdelivr.net/gh/snail5555/akv@main/789bet/images/banner/c.jpg',
+  'https://cdn.jsdelivr.net/gh/snail5555/akv@main/789bet/images/banner/d.jpg',
+  'https://cdn.jsdelivr.net/gh/snail5555/akv@main/789bet/images/banner/e.jpg',
+];
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
+  const [isOpenDangKi, setIsOpenDangKi] = useState(false);
+  const [key, setKey] = useState(0);
+  const [isOpenDangNhap, setIsOpenDangNhap] = useState(false);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  const [loadUser, setLoadUser] = useState(false);
+  const { user, balance } = useUser();
+  const { width } = useWindowSize()
+
+  const handleDangNhap = () => {
+    setIsOpenDangKi(false);
+    setIsOpenDangNhap(true);
+  };
+
+  const handleDangKi = () => {
+    setIsOpenDangKi(true);
+    setIsOpenDangNhap(false);
+  };
+
+  // layout login
+  let EmtyUser = () => {
+    if (user) {
+      return (
+        <>
+          <div
+            className='flex w-full md:hidden'
+            style={{
+              background:
+                'linear-gradient(rgb(18, 159, 113), rgb(18, 159, 113))',
+            }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            <div className='w-[30%] p-2 grid place-content-center text-center font-sans'>
+              <div className='w-auto text-[11px] text-white whitespace-nowrap'>
+                Xin Chào : {user?.username}
+              </div>
+              <div className='flex gap-2 justify-center items-center text-[11px] text-yellow-400 px-4'>
+                {balance}
+                <SyncOutlined color='#ff0' />
+              </div>
+            </div>
+            <div
+              className='flex w-full justify-evenly'
+              style={{
+                background:
+                  'linear-gradient(110deg,transparent 35px,#10825e 0) left',
+              }}
+            >
+              <div
+                onClick={() => router.push('/account/deposit')}
+                style={{ color: 'rgb(255 227 19 / 1)' }}
+                className=' grid justify-items-center  cursor-pointer justify-center items-center text-[10px] rounded-md my-[5px]'
+              >
+                <FontAwesomeIcon
+                  icon={faWallet}
+                  className='fas fa-sign-out-alt'
+                  style={{ color: 'rgb(255 227 19 / 1)', fontSize: '26px' }}
+                />
+                Nạp tiền ngay
+              </div>
+              <div
+                onClick={() => router.push('/account/withdraw-application')}
+                style={{ color: 'rgb(255 227 19 / 1)' }}
+                className='grid justify-items-center cursor-pointer justify-center items-center text-[10px] rounded-md my-[5px'
+              >
+                <FontAwesomeIcon
+                  icon={faHandHoldingUsd}
+                  className='fas fa-sign-out-alt'
+                  style={{ color: 'rgb(255 227 19 / 1)', fontSize: '26px' }}
+                />
+                Rút tiền ngay
+              </div>
+              <div
+                onClick={() => router.push('/account/withdraw-application')}
+                style={{ color: 'rgb(255 227 19 / 1)' }}
+                className='grid justify-items-center  cursor-pointer justify-center items-center text-[10px] rounded-md my-[5px'
+              >
+                <CalendarFilled
+                  className='fas fa-sign-out-alt'
+                  style={{ color: 'rgb(255 227 19 / 1)', fontSize: '26px' }}
+                />
+                Đăng ký
+              </div>
+            </div>
+          </div>
+        </>
+      );
+    }
+
+    return (
+      <div
+        className='flex w-full md:hidden'
+        style={{
+          background: 'linear-gradient(rgb(18, 159, 113), rgb(18, 159, 113))',
+        }}
+      >
+        <div className='w-[40%] p-2 grid place-content-center '>
+          <div
+            onClick={() => {
+              // setIsOpenDangNhap(true)
+              setIsOpenDangKi(true);
+              setKey(1);
+            }}
+            style={{
+              color: 'rgb(255 227 19 / 1)',
+              border: '1px solid rgb(255, 227, 19)',
+            }}
+            className='px-[10px] w-[80px] cursor-pointer justify-center flex items-center text-[10px] rounded-md my-[5px]'
           >
-            Read our docs
-          </a>
+            Đăng nhập
+          </div>
+          <div
+            onClick={() => {
+              setKey(2);
+              setIsOpenDangKi(true);
+            }}
+            style={{
+              color: 'rgb(255 227 19 / 1)',
+              border: '1px solid rgb(255, 227, 19)',
+            }}
+            className='px-[10px] w-[80px] cursor-pointer justify-center flex items-center text-[10px] rounded-md my-[5px]'
+          >
+            Đăng ký
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+        <div
+          className='flex w-full justify-evenly'
+          style={{
+            background:
+              'linear-gradient(110deg,transparent 35px,#10825e 0) left',
+          }}
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+          <div
+            onClick={() => router.push('/account/deposit')}
+            style={{ color: 'rgb(255 227 19 / 1)' }}
+            className=' grid justify-items-center px-[10px]  cursor-pointer justify-center items-center text-[10px] rounded-md my-[5px]'
+          >
+            <FontAwesomeIcon
+              icon={faWallet}
+              className='fas fa-sign-out-alt'
+              style={{ color: 'rgb(255 227 19 / 1)', fontSize: '26px' }}
+            />
+            Nạp tiền ngay
+          </div>
+          <div
+            onClick={() => router.push('/account/withdraw-application')}
+            style={{ color: 'rgb(255 227 19 / 1)' }}
+            className='grid justify-items-center px-[10px]  cursor-pointer justify-center items-center text-[10px] rounded-md my-[5px'
+          >
+            <FontAwesomeIcon
+              icon={faHandHoldingUsd}
+              className='fas fa-sign-out-alt'
+              style={{ color: 'rgb(255 227 19 / 1)', fontSize: '26px' }}
+            />
+            Rút tiền ngay
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const SampleNextArrow = (props: any) => {
+    const { className, style, onClick } = props;
+    return (
+      <div
+        className={`${className} ${styles.nextArrow}`}
+        style={{
+          ...style,
+        }}
+        onClick={onClick}
+      />
+    );
+  };
+
+  const SamplePrevArrow = (props: any) => {
+    const { className, style, onClick } = props;
+    return (
+      <div
+        className={`${className} ${styles.nextArrow}`}
+        style={{
+          ...style,
+        }}
+        onClick={onClick}
+      />
+    );
+  };
+
+  return (
+    <main className='max-sm:pb-[100px] max-sm:h-[calc(100vh-116px)] max-sm:overflow-y-auto  flex w-full sm:min-h-full flex-col items-center justify-between max-md:justify-start max-md:overflow-scroll max-sm:bg-[#111]'>
+      <div className='block md:hidden w-full h-auto '>
+        <div className='w-full h-[31px] flex items-center relative bg-[#222222] px-1'>
+          <div className='absolute top-0 left-0 w-10 flex justify-center items-center h-full bg-[#222222] z-[3]'>
+            <Image
+              src={img.speaker}
+              width={16}
+              height={18}
+              alt=''
+              className='!w-[18px] !h-[16px]'
+            />
+          </div>
+
+          <Marquee
+            pauseOnHover
+            gradientWidth={1000}
+            className='w-full text-white leading-6 text-[12px] mx-2'
+          >
+            <span>
+              HÃY CẨN THẬN CÁC ĐƯỜNG LINK GIẢ MẠO ĐÁNH CẮP THÔNG TIN DƯỚI ĐÂY :
+            </span>
+            <span>🆘 https://789bet.vip ⚠️ ( GIẢ MẠO ĐÁNH CẮP THÔNG TIN )</span>
+            <span>
+              🆘https://austinrose.com ⚠️ ( GIẢ MẠO ĐÁNH CẮP THÔNG TIN )
+            </span>
+            <span>
+              🆘https://condorealtyinc.com ⚠️ ( GIẢ MẠO ĐÁNH CẮP THÔNG TIN )
+            </span>
+            <span>
+              🆘https://raovat30s.com ⚠️ ( GIẢ MẠO ĐÁNH CẮP THÔNG TIN )
+            </span>
+            <span>
+              🆘https://goodrichgoodyear.com ⚠️ ( GIẢ MẠO ĐÁNH CẮP THÔNG TIN )
+            </span>
+            <span>🆘https://789bet.sh ⚠️ ( GIẢ MẠO ĐÁNH CẮP THÔNG TIN )</span>
+            <span>
+              🆘https://torontoelectionnews.com⚠️ ( GIẢ MẠO ĐÁNH CẮP THÔNG TIN )
+            </span>
+            <span>
+              🆘https://789betcom0.com ⚠️ ( GIẢ MẠO ĐÁNH CẮP THÔNG TIN )
+            </span>
+            <span>
+              🆘https://789betcom1.com⚠️ ( GIẢ MẠO ĐÁNH CẮP THÔNG TIN )
+            </span>
+            <span>
+              🆘https://ritual-magic.com ⚠️ ( GIẢ MẠO ĐÁNH CẮP THÔNG TIN )
+            </span>
+            <span>🆘https://789b1.xyz ⚠️ ( GIẢ MẠO ĐÁNH CẮP THÔNG TIN )</span>
+            <span>🆘https://789bet.vin ⚠️ ( GIẢ MẠO ĐÁNH CẮP THÔNG TIN )</span>
+            <span>
+              🆘https://789b1vip.com ⚠️ ( GIẢ MẠO ĐÁNH CẮP THÔNG TIN )
+            </span>
+            <span>
+              🆘https://789bet-run.life ⚠️ ( GIẢ MẠO ĐÁNH CẮP THÔNG TIN )
+            </span>
+            <span>🆘https://789bet.win ⚠️ ( GIẢ MẠO ĐÁNH CẮP THÔNG TIN )</span>
+            <span>🆘https://789bet.esq ⚠️ ( GIẢ MẠO ĐÁNH CẮP THÔNG TIN )</span>
+            <span>🆘https://789bet.uk ⚠️ ( GIẢ MẠO ĐÁNH CẮP THÔNG TIN )</span>
+            <span>
+              🆘https://789betvn.dev ⚠️ ( GIẢ MẠO ĐÁNH CẮP THÔNG TIN )
+            </span>
+            <span>
+              🆘https://789bet789.org ⚠️ ( GIẢ MẠO ĐÁNH CẮP THÔNG TIN )
+            </span>
+            <span>🆘https://789bet.mn ⚠️ ( GIẢ MẠO ĐÁNH CẮP THÔNG TIN )</span>
+            <span>🆘https://7899355.com ⚠️ ( GIẢ MẠO ĐÁNH CẮP THÔNG TIN )</span>
+            <span>
+              🆘https://789b1vip.com ⚠️ ( GIẢ MẠO ĐÁNH CẮP THÔNG TIN )
+            </span>
+            <span>
+              🆘https://789bet1x.com ⚠️ ( GIẢ MẠO ĐÁNH CẮP THÔNG TIN )
+            </span>
+            <span>
+              🆘https://play-789bet.site ⚠️ ( GIẢ MẠO ĐÁNH CẮP THÔNG TIN )
+            </span>
+          </Marquee>
+        </div>
+
+        <Swiper
+          slidesPerView={1}
+          // effect="fade"
+          scrollbar={{ draggable: true }}
+          autoplay={{ delay: 5000 }}
+          modules={[Autoplay, EffectFade, Navigation]}
+          navigation={true}
+          loop={true}
+          className='customSwiperNavigation h-[136px]'
         >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+          {dataImgSlide.map((data, index) => (
+            <SwiperSlide className='!flex justify-center' key={index}>
+              <Image
+                loading='lazy'
+                src={data}
+                alt=''
+                layout='fill'
+                objectFit='cover'
+                quality={getImageQuality(width)}
+                className='max-md:object-cover max-md:h-full max-md:w-full'
+              />
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
+      <div className='hidden md:block w-full h-auto '>
+        <Swiper
+          slidesPerView={1}
+          effect='fade'
+          navigation={true}
+          scrollbar={{ draggable: true }}
+          autoplay={{ delay: 5000 }}
+          modules={[EffectFade, Autoplay, Navigation]}
+          loop={true}
+          height={500}
+          className='customSwiper'
         >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+          {dataImgSlide.map((data, index) => (
+            <SwiperSlide className='!flex justify-center' key={index}>
+              <Image
+                loading='lazy'
+                src={data}
+                alt=''
+                className='max-md:object-cover max-md:h-[146] max-md:w-full'
+                width={1900}
+                height={500}
+
+              />
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
+      <HomePageMobile />
+      <MarqueeDesktop />
+      <LiusSuarez />
+      <JackportComponent />
+      <DiverseProducts />
+      <GameHot />
+      <DownloadApp />
+    </main>
   );
 }
